@@ -22,31 +22,36 @@ MODELS = [
     "qwen2.5:7b",
 ]
 
-EMBED_MODEL = "all-MiniLM-L6-v2"
+#EMBED_MODEL = "all-MiniLM-L6-v2" 
+EMBED_MODEL = "MongoDB/mdbr-leaf-ir"
 
 CHUNK_CONFIGS = {
-    "T256_O64": {
-        "bm25": "data/bm25_indices/T256_O64/bm25.pkl",
-        "faiss": "data/vector_indices/T256_O64/faiss.index",
-        "meta":  "data/vector_indices/T256_O64/metas.pkl",
-    },
-    "T512_O128": {
-        "bm25": "data/bm25_indices/T512_O128/bm25.pkl",
-        "faiss": "data/vector_indices/T512_O128/faiss.index",
-        "meta":  "data/vector_indices/T512_O128/metas.pkl",
-    },
+    # "T256_O64": {
+    #     "bm25": "data/bm25_indices/T256_O64/bm25.pkl",
+    #     "faiss": "data/vector_indices/T256_O64/faiss.index",
+    #     "meta":  "data/vector_indices/T256_O64/metas.pkl",
+    # },
+    # "T512_O128": {
+    #     "bm25": "data/bm25_indices/T512_O128/bm25.pkl",
+    #     "faiss": "data/vector_indices/T512_O128/faiss.index",
+    #     "meta":  "data/vector_indices/T512_O128/metas.pkl",
+    # },
+    # "W100": {
+    #     "bm25": "data/bm25_indices/W100/bm25.pkl",
+    #     "faiss": "data/vector_indices/W100/faiss.index",
+    #     "meta":  "data/vector_indices/W100/metas.pkl",
+    # },
     "W100": {
-        "bm25": "data/bm25_indices/W100/bm25.pkl",
-        "faiss": "data/vector_indices/W100/faiss.index",
-        "meta":  "data/vector_indices/W100/metas.pkl",
+        "faiss": "data/mdbr_teacher_vector_indices/W100/faiss.index",
+        "meta":  "data/mdbr_teacher_vector_indices/W100/metas.pkl",
     },
 }
 
-TOP_K_LIST = [1, 2, 3]
-SAMPLE_SIZE = 1000
+TOP_K_LIST = [1,2,3]
+SAMPLE_SIZE = 10
 SEED = 42
 
-OUTPUT_CSV = "rag_grid_results.csv"
+OUTPUT_CSV = "leaf_rag_grid_results_2.csv"
 
 
 # =================================================
@@ -166,9 +171,9 @@ async def main():
             engine_rag = InferenceEngine("NAIVE_RAG", MODEL, verbose=False)
 
             for chunk_name, paths in CHUNK_CONFIGS.items():
-                bm25_data = pickle.load(open(paths["bm25"], "rb"))
-                bm25 = bm25_data["bm25"]
-                bm25_corpus = [m["text"] for m in bm25_data["metas"]]
+                # bm25_data = pickle.load(open(paths["bm25"], "rb"))
+                # bm25 = bm25_data["bm25"]
+                # bm25_corpus = [m["text"] for m in bm25_data["metas"]]
 
                 faiss_index = faiss.read_index(paths["faiss"])
                 faiss_meta = pickle.load(open(paths["meta"], "rb"))

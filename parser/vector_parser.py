@@ -10,20 +10,20 @@ from sentence_transformers import SentenceTransformer
 # 설정
 # =====================
 DOC_PATH = "./data/popqa_entity_wiki.jsonl"
-OUT_BASE = Path("./data/mdbr_vector_indices")
+OUT_BASE = Path("./data/mdbr_teacher_vector_indices")
 OUT_BASE.mkdir(exist_ok=True)
 
 CHUNK_CONFIGS = {
-    "W100": {
-        "type": "word",
-        "size": 100,
-        "overlap": 0
-    },
-    "T256_O64": {
-        "type": "token",
-        "size": 256,
-        "overlap": 64
-    },
+    # "W100": {
+    #     "type": "word",
+    #     "size": 100,
+    #     "overlap": 0
+    # },
+    # "T256_O64": {
+    #     "type": "token",
+    #     "size": 256,
+    #     "overlap": 64
+    # },
     "T512_O128": {
         "type": "token",
         "size": 512,
@@ -35,7 +35,9 @@ enc = tiktoken.get_encoding("cl100k_base")
 
 #model = SentenceTransformer("all-MiniLM-L6-v2")
 
-model = SentenceTransformer("MongoDB/mdbr-leaf-ir")
+# model = SentenceTransformer("MongoDB/mdbr-leaf-ir")
+
+model = SentenceTransformer("Snowflake/snowflake-arctic-embed-m-v1.5")
 
 
 # =====================
