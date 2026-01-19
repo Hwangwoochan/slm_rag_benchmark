@@ -7,8 +7,7 @@ from tqdm import tqdm
 # =================================================
 # 1. 설정 (Configuration)
 # =================================================
-# 발급받은 API 키를 여기에 입력하세요.
-API_KEY = "AIzaSyBXh8qkSH0mb-_EJWBu-3-kpHEwzh5fwHQ" 
+API_KEY = "." 
 genai.configure(api_key=API_KEY)
 
 # 추론 능력이 뛰어난 gemini-1.5-pro 모델 사용 권장 [cite: 450, 481]

@@ -8,7 +8,7 @@ from tqdm import tqdm
 # =================================================
 # 1. 설정 (사용자 목록에서 확인된 최신 모델 적용)
 # =================================================
-API_KEY = "AIzaSyBXh8qkSH0mb-_EJWBu-3-kpHEwzh5fwHQ" 
+API_KEY = "." 
 client = genai.Client(api_key=API_KEY)
 
 # 목록에서 확인된 최신 Pro 모델 ID 사용
