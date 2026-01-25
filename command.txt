@@ -1,0 +1,78 @@
+python test.py \
+  --data_path ./data/delucionqa/delucionqa.json \
+  --input_format jsonl \
+  --model_name qwen2.5:7b \
+  --output_jsonl results_oracle_sent.jsonl \
+  --max_ctx_chars 8000 \
+  --use_reference response
+
+
+
+
+
+pip install -U "transformers>=4.41" "datasets>=2.18" "peft>=0.11" "accelerate>=0.30" safetensors
+
+
+
+python3 make_sft_jsonl.py \
+  --in data/delucionqa/delucionqa.jsonl \
+  --out data/output/train_oracle_sft.jsonl \
+  --mode oracle \
+  --max_ctx 40 \
+  --add_cfail \
+  --cfail_ratio 1.0 \
+  --oracle_remove_relevant
+
+
+
+python3 test.py \
+  --in data/delucionqa/delucionqa.json \
+  --out data/output/train_oracle_sft.jsonl \
+  --mode oracle \
+  --max_ctx 40 \
+  --add_cfail \
+  --cfail_ratio 1.0 \
+  --oracle_remove_relevant
+
+## ver2
+python3 test.py \
+  --in data/delucionqa/delucionqa.json \
+  --out data/output/train_oracle_plus_idk.jsonl \
+  --mode oracle \
+  --max_ctx 40 \
+  --idk_ratio 0.3
+
+
+
+
+
+
+
+
+###guf로 만들기
+# llama.cpp 디렉토리로 이동 (필요한 경우)
+cd ~/Desktop/llama.cpp
+
+# 변환 실행
+python convert_hf_to_gguf.py \
+  ~/Desktop/tt/slm_rag_benchmark/final_merged_smollm2_rag/ \
+  --outfile smollm2_rag_f16.gguf \
+  --outtype f16
+
+## 합치기
+# 모델 생성
+ollama create smollm2-rag -f Modelfile
+
+
+
+python convert_hf_to_gguf.py \
+  ~/Desktop/tt/slm_rag_benchmark/final_merged_qwen_rag/ \
+  --outfile smollm2_rag_f16.gguf \
+  --outtype f16
+
+./build/bin/llama-quantize \
+  ~/Desktop/llama.cpp/qwenf16.gguf \
+ ./qwen_rag_q4_km.gguf \
+  Q4_K_M
+
+huggingface-cli download Qwen/Qwen2.5-7B-Instruct --local-dir ./Qwen2.5-7B-Instruct

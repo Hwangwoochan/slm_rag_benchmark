@@ -3,17 +3,28 @@ Prompt Templates for SLM + RAG Experiments
 ==========================================
 
 Modes:
-1. ONLY_SLM      : No retrieval baseline
-2. NAIVE_RAG     : BM25 / Vector naive RAG
-3. FAIL_RESPONSE : Unified fallback
+1. NO_PROMPT     : Raw model behavior (no instruction)
+2. ONLY_SLM      : No retrieval baseline
+3. NAIVE_RAG     : BM25 / Vector naive RAG
+4. FAIL_RESPONSE : Unified fallback
 """
+
+# =====================
+# 0. NO PROMPT (RAW)
+# =====================
+
+NO_PROMPT = "{input}"
 
 # =====================
 # 1. ONLY SLM (No-RAG)
 # =====================
 
-ONLY_SLM_PROMPT = """Answer the following question concisely.
-If you do not know the answer, say "I don't know". 
+ONLY_SLM_PROMPT = """Answer the following question.
+
+Rules:
+- Answer concisely (1–3 sentences).
+- Be factual.
+- If you do not know the answer, say exactly: "I don't know".
 
 Question:
 {question}
@@ -26,8 +37,12 @@ Answer:
 # =====================
 
 NAIVE_RAG_PROMPT = """Answer the question using ONLY the information in the context below.
-If the answer cannot be found in the context, say "I don't know".
-Do not use any external knowledge.
+
+Rules:
+- Use only the provided context.
+- Do NOT use external knowledge or assumptions.
+- Answer concisely (1–3 sentences).
+- If the answer cannot be determined from the context, say exactly: "I don't know".
 
 Context:
 {context}

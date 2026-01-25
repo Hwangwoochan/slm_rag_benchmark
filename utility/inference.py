@@ -5,6 +5,7 @@ inference.py
 Inference logic for SLM + RAG experiments.
 
 Modes:
+- NO_PROMPT
 - ONLY_SLM
 - NAIVE_RAG
 
@@ -14,7 +15,7 @@ Responsibilities:
 - NO retrieval, NO evaluation
 """
 
-from typing import List, Callable, Optional
+from typing import List, Optional
 from .prompt import ONLY_SLM_PROMPT, NAIVE_RAG_PROMPT, FAIL_RESPONSE
 from .ollama import generate
 
@@ -32,8 +33,9 @@ class InferenceEngine:
         self.verbose = verbose
         self.max_context_chars = max_context_chars
 
-        # inference function binding
-        if mode == "ONLY_SLM":
+        if mode == "NO_PROMPT":
+            self._infer_fn = self._infer_no_prompt
+        elif mode == "ONLY_SLM":
             self._infer_fn = self._infer_only_slm
         elif mode == "NAIVE_RAG":
             self._infer_fn = self._infer_naive_rag
@@ -53,6 +55,35 @@ class InferenceEngine:
     # =====================
     # inference implementations
     # =====================
+    async def _infer_no_prompt(
+        self,
+        question: str,
+        retrieved_chunks: Optional[List[str]] = None,
+    ) -> str:
+        """
+        Raw inference:
+        - No instructions
+        - No formatting
+        - Question (+ optional context) only
+        """
+        parts = []
+
+        if retrieved_chunks:
+            context = "\n\n".join(retrieved_chunks)
+            context = context[: self.max_context_chars]
+            parts.append(context)
+
+        parts.append(question)
+
+        prompt = "\n\n".join(parts)
+
+        answer = await generate(
+            prompt,
+            model=self.model,
+            verbose=self.verbose,
+        )
+        return answer.strip() if answer else FAIL_RESPONSE
+
     async def _infer_only_slm(
         self,
         question: str,
